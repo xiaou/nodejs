@@ -2,13 +2,16 @@
 
 var handle = require("./requestHandlers");
 
-function route(pathname)
+function route(pathname, request, response)
 {
 	if(typeof handle[pathname] == "function")
-		handle[pathname]();
+		handle[pathname](request, response);
 	else
-		console.log("no request handler found in \"requestHandlers\"");
-
+	{
+		response.writeHead(404, {"content-type": "text/plain"});
+		response.write("404. " + pathname + " Not found.");
+		response.end();
+	}
 }
 
 exports.route = route;

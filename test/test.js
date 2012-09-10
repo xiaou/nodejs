@@ -1,9 +1,9 @@
 // test.js
 
-function funcxx()
-{
-	process.stdout.write("my name is:" + this.name);	
-}
+var sys = require("sys");
+var util = require("util");
 
-console.log(funcxx.name+'\n\n');
-funcxx();
+sys.puts(sys.inspect(sys, false, null));
+util.puts(util.inspect(util));
+
+
