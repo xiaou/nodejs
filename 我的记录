@@ -2,3 +2,5 @@
 $ sudo npm install -g supervisor
 $ supervisor index.js 
 
+装websocket包:
+$ sudo npm install websocket-server
