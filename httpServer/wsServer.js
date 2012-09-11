@@ -2,32 +2,34 @@
 
 
 var ws = require("websocket-server");
-var server = ws.createServer({debug: true});
+var querystring = require("querystring");
 
-
-server.addListener("connection", 
-function(connection)
+function create(httpServer)
 {
-	connection.addListener("message",
-	function(message)
+	var server = ws.createServer({debug: true, server: httpServer});
+
+	server.addListener("connection", 
+	function(connection)
 	{
-		server.broadcast(message);
+		server.broadcast("welcom xxx come.");
+
+		connection.addListener("message",
+		function(message)
+		{
+			connection.broadcast(message);
+		}
+		);
+	}
+	);
+			  
+	server.addListener("close",
+	function(connection)
+	{
+		connection.broadcast(querystring.stringify({"quit": "somebody"}));
 	}
 	);
 }
-);
 
-server.addListener("close",
-function(connection)
-{
-		
-}
-);
-
-
-server.listen(8091);
-
-
-
+exports.create = create;
 
 

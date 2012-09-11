@@ -2,9 +2,9 @@
 
 var http = require("http");
 var url = require("url");
+var httpServer;
 
-
-function start(router)
+function create(router)
 {
 	function onRequest(request, response)
 	{
@@ -20,10 +20,13 @@ function start(router)
 		router.route(pathname, request, response);
 	}
 
-	http.createServer(onRequest).listen(8090);
-
+	httpServer = http.createServer(onRequest);
+	
 	console.log("server is on 8090");
+
+	return httpServer;
 }
 
-exports.start = start;
+exports.create = create;
+exports.httpServer = httpServer;
 
