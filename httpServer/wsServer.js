@@ -18,6 +18,11 @@ function(connection)
 );
 
 server.addListener("close",
+function(connection)
+{
+		
+}
+);
 
 
 server.listen(8091);
