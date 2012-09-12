@@ -2,7 +2,6 @@
 
 var http = require("http");
 var url = require("url");
-var httpServer;
 
 function create(router)
 {
@@ -28,5 +27,4 @@ function create(router)
 }
 
 exports.create = create;
-exports.httpServer = httpServer;
 

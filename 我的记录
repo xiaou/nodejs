@@ -2,5 +2,14 @@
 $ sudo npm install -g supervisor
 $ supervisor index.js 
 
+
+
 装websocket包:
-$ sudo npm install websocket-server
+
+$ sudo npm install websocket-server<--坑爹!
+经折腾，这个包就是一个坑爹！
+
+这个好：
+$ sudo npm install socket.io
+
+

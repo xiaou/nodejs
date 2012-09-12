@@ -45,27 +45,32 @@ style= "width:50%; height:500; border:1px #009000 solid; overflow-y:scroll; over
 <script>
 var output = $("#outputArea");
 var input = $("#inputArea");
+var ws;
 
-var hostname = location.hostname;
-var port = location.port;
-var url = "ws://" + hostname + ":" + port;
-var ws = new WebSocket(url);
-ws.onopen = function()
+function onopen(event)
 {
-	ws.send();
+	log("xx come!" + event.data);
 }
-ws.onmessage = function(e)
+function onerror(event)
 {
-	var msg = e.data;
-	
+	log("error你妹啊: " + event.data);
 }
-   
+function onmessage(event)
+{
+	var msg = event.data;
+	log("recv:" + msg);
+}
+function onclose(event)
+{
+	log("onclose.");
+}  
+
 function sendMessage()
 {
 	output.append(input.val() + "\n");
 	scroll2ShowAllDiv("outputDiv");
 	
-	log(input.val());
+	ws.send(input.val());
 }
 
 function log(msg)
@@ -82,6 +87,23 @@ function scroll2ShowAllDiv(strDivId)
 
 window.onload = function() 
 {	
+	if (typeof WebSocket === 'undefined') 
+	{
+		log("check, error: 你的浏览器不支持WebSocket!");
+	}
+	else
+	{
+		log("check, ok: 你的浏览器支持WebSocket!");
+		var hostname = location.hostname;
+		var port = location.port;
+		var url = "ws://" + hostname + ":" + port;
+		ws = new WebSocket(url);
+		ws.onopen = onopen;
+		ws.onerror = onerror;
+		ws.onmessage = onmessage; 
+		ws.onclose = onclose;
+	}
+
 	$("#inputDiv").click(
 	function()
 	{
