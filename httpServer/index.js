@@ -2,8 +2,7 @@
 
 
 var router = require("./router");
-var httpServer = require("./server").create(router);
-var wsServer = require("./wsServer").create(httpServer);
+var svr = require("./server").create(router);
+require("./webSocket").create(svr);
 
-wsServer.listen(8090);
 

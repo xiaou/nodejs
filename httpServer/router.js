@@ -1,6 +1,7 @@
 // router.js
 
 var handle = require("./requestHandlers");
+var fs = require("fs");
 
 function route(pathname, request, response)
 {
@@ -8,9 +9,23 @@ function route(pathname, request, response)
 		handle[pathname](request, response);
 	else
 	{
-		response.writeHead(404, {"content-type": "text/plain"});
-		response.write("404. " + pathname + " Not found.");
-		response.end();
+		fs.readFile("." + pathname, 
+		function(err, html)
+		{
+			if(err)
+			{
+				response.writeHead(404, {"content-type": "text/plain"});
+				response.write("404. " + pathname + " Not found xx.");
+				response.end();
+			}
+			else
+			{
+				response.writeHead(200, {"content-type": "text/plain"});
+				response.write(html);
+				response.end();
+			}
+		}
+		);
 	}
 }
 

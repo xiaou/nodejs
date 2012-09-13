@@ -21,9 +21,8 @@ function create(router)
 
 	httpServer = http.createServer(onRequest);
 	
-	httpServer.listen(8090);
 	console.log("server is on 8090");
-	
+
 	return httpServer;
 }
 

@@ -1,15 +1,16 @@
-<! start.html >
-
 <html>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+<!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>-->
+<script src="jquery.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="chatEventLib.js"></script>
 </head>
 
 <style>
 textarea
 {
-width:80%;
+width:90%;
 height:90%;
 border:0px;
 }
@@ -25,52 +26,88 @@ word-wrap: break-word;       /* Internet Explorer 5.5+ */
 
 <body>
 
+昵称:
+<input id="nameArea" size=10 type="text"></input>
+<button id="modifyButton">修改</button>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;简陋的聊天室(node.js +websocket). 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+by: xiaoU
+
 <div id="outputDiv"  
-style= "width:50%; height:500; border:1px #009000 solid; overflow-y:scroll; overflow-x:hidden ">
+style= "width:100%; height:500; border:1px #009000 solid; overflow-y:scroll; overflow-x:hidden ">
 <div id="msg"><pre id="outputArea"></pre></div>
 <div id="msg_end" style="height:0px; overflow:hidden"></div>
 </div>
 
-<div id="inputDiv" style="width:50%; height:100; border:1px #900000 solid;">
-<textarea id="inputArea" onkeydown='if(event.keyCode==13){submitButton.click()}'>
+<div id="inputDiv" style="width:100%; height:100; border:1px #900000 solid;">
+<textarea id="inputArea" onkeyup='if(event.keyCode==13){submitButton.click()}'>
 </textarea>
 <button id="submitButton" >Submit</button>
 </div>
 
 <br /><b>log:</b>
-<div id="logDiv" style= "width:50%; height:200; overflow-y:scroll; overflow-x:hidden">
+<div id="logDiv" style= "width:100%; height:200; overflow-y:scroll; overflow-x:hidden">
 <pre id="logArea"></pre>
 </div>
 
-<script>
-var output = $("#outputArea");
-var input = $("#inputArea");
-var ws;
+<script> 
 
-function onopen(event)
+output = $("#outputArea");
+input = $("#inputArea");
+nickName = $("#nameArea");
+var defaultNickName = "!人类";
+var socket = io.connect("http://" + location.hostname + ":" + location.port + "/chat");
+var CHAT_EVENT = chatEventLib.CHAT_EVENT;
+var CHAT_EVENT_TYPE = chatEventLib.CHAT_EVENT_TYPE;
+
+socket.on("connect", 
+function()
 {
-	log("xx come!" + event.data);
+	log("You connected.");
+	
+	if(nickName.val())
+		nickName.val(defaultNickName);
+	
+	socket.emit(CHAT_EVENT, 
+	{
+		type: CHAT_EVENT_TYPE.NAME,
+		data: nickName.val()
+	}
+	);
 }
-function onerror(event)
+);
+
+socket.on(CHAT_EVENT,
+function(data)
 {
-	log("error你妹啊: " + event.data);
+	switch(data.type)
+	{
+		case CHAT_EVENT_TYPE.SAY:
+		showMessage("[" + data.user + "] :\n\t" + data.data);
+		break;
+		
+		case CHAT_EVENT_TYPE.INFO:
+		showMessage("<b>[admin] :\n\t" + data.data + "</b>");
+		break;
+	}
 }
-function onmessage(event)
+);
+
+function showMessage(msg)
 {
-	var msg = event.data;
-	log("recv:" + msg);
+	output.append(msg + "\n\n");
+	scroll2ShowAllDiv("outputDiv");
 }
-function onclose(event)
-{
-	log("onclose.");
-}  
 
 function sendMessage()
 {
-	output.append(input.val() + "\n");
-	scroll2ShowAllDiv("outputDiv");
-	
-	ws.send(input.val());
+	socket.emit(CHAT_EVENT,
+	{
+		type: CHAT_EVENT_TYPE.SAY,
+		data: input.val()
+	}
+	);
 }
 
 function log(msg)
@@ -87,21 +124,16 @@ function scroll2ShowAllDiv(strDivId)
 
 window.onload = function() 
 {	
+	if(nickName.val() === "")
+		nickName.val(defaultNickName);
+			
 	if (typeof WebSocket === 'undefined') 
 	{
-		log("check, error: 你的浏览器不支持WebSocket!");
+		log("check-error: 你的浏览器不支持WebSocket!");
 	}
 	else
 	{
-		log("check, ok: 你的浏览器支持WebSocket!");
-		var hostname = location.hostname;
-		var port = location.port;
-		var url = "ws://" + hostname + ":" + port;
-		ws = new WebSocket(url);
-		ws.onopen = onopen;
-		ws.onerror = onerror;
-		ws.onmessage = onmessage; 
-		ws.onclose = onclose;
+		log("check-ok: 你的浏览器支持WebSocket!");
 	}
 
 	$("#inputDiv").click(
@@ -116,6 +148,21 @@ window.onload = function()
 	{
 		sendMessage();
 		input.val("");
+	}
+	);
+	
+	$("#modifyButton").click(
+	function()
+	{
+		if(nickName.val() === "")
+			nickName.val(defaultNickName);
+		
+		socket.emit(CHAT_EVENT, 
+		{
+		type: CHAT_EVENT_TYPE.NAME,
+		data: nickName.val()
+		}
+		);
 	}
 	);
 }

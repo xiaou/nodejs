@@ -69,6 +69,5 @@ handle["/start"] = handle["/"] = start;
 handle["/upload"] = upload;
 handle["/terminal"] = terminal;
 
-
 module.exports = handle;
 
