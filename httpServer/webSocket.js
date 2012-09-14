@@ -18,12 +18,11 @@ function create(httpServer)
 	function(socket)
 	{
 		clients.push(socket);
-		console.log("see " + clients[0].id);
 		
 		ioChatSockets.emit(CHAT_EVENT, 
 		{
 			type: CHAT_EVENT_TYPE.INFO,
-			data: "welcome " + socket.id + " come here~"
+			data: "welcome " + socket.id + "~"
 		}
 		);
 		
@@ -75,7 +74,7 @@ function create(httpServer)
 							{
 								if(err)
 									name = "";
-								data.data += "\n\t" + name + " (" + client.id + ")"
+								data.data += "\n\t" + name + " (" + client.id + ")" + " address:" + client.handshake.address.address + ":" + client.handshake.address.port;
 							}
 							);
 						}
