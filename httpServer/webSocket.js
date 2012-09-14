@@ -10,7 +10,7 @@ var CHAT_EVENT_TYPE = chatEventLib.CHAT_EVENT_TYPE;
 
 function create(httpServer)
 {
-	var io = socketio.listen(httpServer);
+	var io = socketio.listen(httpServer, {log: false});
 	var ioChatSockets = io.of("/chat");
 	var clients = [];
 
