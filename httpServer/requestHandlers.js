@@ -67,7 +67,7 @@ function terminal(request, response)
 var handle = {};
 handle["/start"] = handle["/"] = start;
 handle["/upload"] = upload;
-handle["/terminal"] = terminal;
+//handle["/terminal"] = terminal;
 
 module.exports = handle;
 

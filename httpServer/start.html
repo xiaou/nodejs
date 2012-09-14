@@ -78,6 +78,13 @@ function()
 }
 );
 
+socket.on('disconnect',
+function() 
+{ 
+	log('You disconnected!'); 
+}
+); 
+
 socket.on(CHAT_EVENT,
 function(data)
 {
