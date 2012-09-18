@@ -60,7 +60,7 @@ nickName = $("#nameArea");
 var defaultNickName = "!人类";
 var socket = io.connect(
 "http://" + location.hostname + ":" + location.port + "/chat"
-, {secure: false}
+, {secure: false}  //if true, it's https and wss.
 );
 var CHAT_EVENT = chatEventLib.CHAT_EVENT;
 var CHAT_EVENT_TYPE = chatEventLib.CHAT_EVENT_TYPE;
