@@ -5,7 +5,6 @@
 <script src="jquery.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script src="chatEventLib.js"></script>
-<script src="myUtil.js"></script>
 </head>
 
 <style>
@@ -60,6 +59,7 @@ nickName = $("#nameArea");
 var defaultNickName = "!人类";
 var socket = io.connect(
 "http://" + location.hostname + ":" + location.port + "/chat"
+//,{secure: true}
 );
 var CHAT_EVENT = chatEventLib.CHAT_EVENT;
 var CHAT_EVENT_TYPE = chatEventLib.CHAT_EVENT_TYPE;
@@ -94,11 +94,11 @@ function(data)
 	switch(data.type)
 	{
 		case CHAT_EVENT_TYPE.SAY:
-		showMessage("[" + data.user + "] " + data.time + ":\n\t" + data.data);
+		showMessage("[" + data.user + "] :\n\t" + data.data);
 		break;
 		
 		case CHAT_EVENT_TYPE.INFO:
-		showMessage("<b>[admin] " + data.time + ":\n\t" + data.data + "</b>");
+		showMessage("<b>[admin] :\n\t" + data.data + "</b>");
 		break;
 	}
 }
@@ -123,7 +123,7 @@ function sendMessage()
 function log(msg)
 {
 	var log = $("#logArea");
-	log.prepend(myUtil.getTime() + ": " + msg + "\n");
+	log.prepend(msg + "\n");
 	document.getElementById('logDiv').scrollTop=0;
 }
 

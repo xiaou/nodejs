@@ -4,11 +4,9 @@
 var socketio = require("socket.io");
 var querystring = require("querystring");
 var util = require('util');
-var myUtil = require("./myUtil");
 var chatEventLib = require("./chatEventLib");
 var CHAT_EVENT = chatEventLib.CHAT_EVENT;
 var CHAT_EVENT_TYPE = chatEventLib.CHAT_EVENT_TYPE;
-
 
 function create(httpServer)
 {
@@ -26,8 +24,7 @@ function create(httpServer)
 		ioChatSockets.emit(CHAT_EVENT, 
 		{
 			type: CHAT_EVENT_TYPE.INFO,
-			data: "welcome " + socket.id + "~",
-			time: myUtil.getTime()
+			data: "welcome " + socket.id + "~"
 		}
 		);
 		
@@ -39,8 +36,7 @@ function create(httpServer)
 			socket.broadcast.emit(CHAT_EVENT, 
 			{
 				type: CHAT_EVENT_TYPE.INFO,
-				data: "ByeBye " + socket.id + "~",
-				time: myUtil.getTime()
+				data: "ByeBye " + socket.id + "~"
 			}
 			);
 		}
@@ -59,8 +55,7 @@ function create(httpServer)
 						ioChatSockets.emit(CHAT_EVENT,
 						{
 							type: CHAT_EVENT_TYPE.INFO,
-							data: socket.id + " (re)named:" + data.data,
-							time: myUtil.getTime()
+							data: socket.id + " (re)named:" + data.data
 						}
 						);
 					}
@@ -97,8 +92,7 @@ function create(httpServer)
 						{
 							type: CHAT_EVENT_TYPE.SAY,
 							user: name + " (" + socket.id + ")",
-							data: data.data,
-							time: myUtil.getTime()
+							data: data.data
 						}
 						);
 					}

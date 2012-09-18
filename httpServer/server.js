@@ -1,10 +1,17 @@
 // server.js
 
+var https = require("https");
 var http = require("http");
 var url = require("url");
+var fs = require("fs");
 
-function create(router)
+function create(router, isSecure)
 {
+	var port = 8090;
+
+	if(!arguments[1]) 
+		isSecure = false;
+
 	function onRequest(request, response)
 	{
 		var pathname = url.parse(request.url).pathname;
@@ -19,12 +26,29 @@ function create(router)
 		router.route(pathname, request, response);
 	}
 
-	httpServer = http.createServer(onRequest);
+	if(isSecure)
+	{
+		var options = 
+		{
+			key: fs.readFileSync("certs/key.pem"),
+			cert: fs.readFileSync("certs/cert.pem")
+		};
 	
-	httpServer.listen(8090);
-	console.log("server is on 8090");
+		httpsServer = https.createServer(options, onRequest);
+		
+		httpsServer.listen(port);
+		console.log("https server is on " + port);
+		
+		return httpsServer;
+	}
+	else
+	{
+		httpServer = http.createServer(onRequest);
+		httpServer.listen(port);
+		console.log("http server is on " + port);
 	
-	return httpServer;
+		return httpServer;
+	}
 }
 
 exports.create = create;

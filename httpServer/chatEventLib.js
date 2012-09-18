@@ -8,18 +8,21 @@ JSON eg:
 
 {
 type: "INFO",
-data: "welcom to the chat~"
+data: "welcom to the chat~",
+time: "2012-9-18 14:40:32"
 }
 
 {
 type: "NAME",
-data: "myNewName"
+data: "myNewName",
+time: "2012-9-18 14:40:32"
 }
 
 {
 type: "SAY",
 user: "xiaoU",
-data: "hello~"
+data: "hello~",
+time: "2012-9-18 14:40:32"
 }
 
 */
