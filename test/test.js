@@ -1,9 +1,14 @@
 // test.js
 
-var sys = require("sys");
-var util = require("util");
 
-sys.puts(sys.inspect(sys, false, null));
-util.puts(util.inspect(util));
+var handle = {};
+handle["k1"] = "v1";
+handle["k2"] = "v2";
+
+for(var k in handle)
+{
+	console.log( k + " = " + handle[k] );
+}
+
 
 
