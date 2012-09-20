@@ -31,14 +31,18 @@ module.exports = function(ioSockets)
 		
 		socket.on(define.notiAuth, function(data)
 		{
-			clearTimeout(timer);
-			auth.checkAuth(socket, data, function(isOK)
+			clearTimeout(timer), timer = null;
+			auth.checkAuth(socket, data.auth, function(isOK)
 			{
+				socket.emit(define.notiAuth, isOK);
+				
 				if(!isOK)
 					socket.disconnect();
 				else
-				{//auth success. send back. and, save the user info in data.
+				{//auth success. Then, send back. and, join the user to the room.
 					
+					var user = data.user;
+					socket.join(user);
 				}
 			});
 		});
@@ -55,6 +59,8 @@ module.exports = function(ioSockets)
 				}
 				else
 				{//居然还没发auth包，就发来了message包.直接断开你这个连接.
+					if(timer) 
+						clearTimeout(timer), timer = null;
 					socket.disconnect();
 				}
 			}

@@ -13,7 +13,7 @@ var CHAT_EVENT_TYPE = chatEventLib.CHAT_EVENT_TYPE;
 function create(httpServer)
 {
 	var io = socketio.listen(httpServer
-							, {log: true}
+							, {log: false}
 							);
 	var ioChatSockets = io.of("/chat");
 	var clients = [];
@@ -22,7 +22,7 @@ function create(httpServer)
 	function(socket)
 	{
 		clients.push(socket);
-		
+
 		ioChatSockets.emit(CHAT_EVENT, 
 		{
 			type: CHAT_EVENT_TYPE.INFO,
@@ -106,6 +106,8 @@ function create(httpServer)
 				}
 				break;
 				
+				default:
+				console.log("no handle for CHAT_EVENT_TYPE:" + data.type + ".code may be some error if you see this message~ -_-|||");
 			}
 		}
 		);
