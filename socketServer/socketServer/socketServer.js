@@ -1,7 +1,7 @@
 // socketServer.js
 
 
-var socketio = require("../socket.io");
+var socketio = require("socket.io");
 var nsHandlers = require("./nsHandlers");
 
 

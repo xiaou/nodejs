@@ -1,5 +1,7 @@
 // server.js
 
+
+var define = require("./define");
 var https = require("https");
 var url = require("url");
 var fs = require("fs");
@@ -7,7 +9,7 @@ var socketServer = require("./socketServer/socketServer");
 
 function run()
 {
-	var port = 8100;
+	var port = define.serverPort;
 	
 	function onRequest(request, response)
 	{

@@ -1,13 +1,12 @@
 // nsHandlers.js
 
 
-var socketio = require("../socket.io");
 var define = require("../define");
 
 
 var handle = {};
 handle[define.nsMoaRtx] = require("./handler" + define.nsMoaRtx.replace("/", "_"));
-handle[define.nsXXXX] = require("./handler" + define.nsXXXX.replace("/", "_"));
+//handle[define.nsXXXX] = require("./handler" + define.nsXXXX.replace("/", "_"));
 
 
 exports.handleAll = function(io)
