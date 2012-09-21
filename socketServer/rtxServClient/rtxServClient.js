@@ -1,7 +1,7 @@
 // rtxServClient.js
 
 var define = require("../define");
-var io = require("socket.io-client");
+var io = require("socket.io/node_modules/socket.io-client");
 
 
 var isConnected = false;
