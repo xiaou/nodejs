@@ -2,20 +2,21 @@
 
 
 var define = require("../define");
-var auth = require("./auth");
+var auth = require("./auth_moa_rtx");
 var rtxServClient = require("../rtxServClient/rtxServClient");
 
 module.exports = function(ioSockets)
 {
 	//
 	var rtxServConn = rtxServClient.connect(function(data)
-	{
-		ioSockets.in(data.user).emit(define.notiMessage, data.data);
+	{// receive data from rtxServ
+		ioSockets.in(data.user/*'namespace' of socket.io*/).emit(
+					define.noti4MoaRtx.message, data.data);
 	});
 	
 	//
 	var clients = [];
-
+	
 	ioSockets.on("connection", function(socket)
 	{
 		clients.push(socket);
@@ -36,12 +37,12 @@ module.exports = function(ioSockets)
 			clients.splice(clients.indexOf(socket), 1);
 		});
 		
-		socket.on(define.notiAuth, function(data)
+		socket.on(define.noti4MoaRtx.auth, function(data)
 		{
 			clearTimeout(timer), timer = null;
 			auth.checkAuth(socket, data.auth, function(isOK)
 			{
-				socket.emit(define.notiAuth, isOK);//send back to client.
+				socket.emit(define.noti4MoaRtx.auth, isOK);//send back to client.
 				
 				if(isOK)
 				{//auth success. Then, join the user to the room.
@@ -53,7 +54,7 @@ module.exports = function(ioSockets)
 			});
 		});
 		
-		socket.on(define.notiMessage, function(data)
+		socket.on(define.noti4MoaRtx.message, function(data)
 		{
 			auth.hasAuth(socket, function(isHasAuth)
 			{

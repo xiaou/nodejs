@@ -14,6 +14,7 @@ function run()
 	function onRequest(request, response)
 	{
 		var pathname = url.parse(request.url).pathname;
+		console.log("http router handle for \"" + pathname + "\"...");
 		/* router要不要对于业务来说已经不重要了.毕竟这不是浏览网页的服务器.但还是留着吧.*/
 		require("./router").route(pathname, request, response);
 	}

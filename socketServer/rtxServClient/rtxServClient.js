@@ -15,7 +15,7 @@ function try2Connect()
 	{
 		console.log("try to connect rtx server again...");
 		socket = io.connect(define.rtxServerLocation);
-	}, 1000 * define.rtxConnectInterval);
+	}, 1000 * define.rtxServConnectInterval);
 }
 
 exports.connect = function(func)
@@ -39,7 +39,7 @@ exports.connect = function(func)
 		try2Connect();
 	});
 	
-	socket.on(define.notiRtxMessage, function(data)
+	socket.on(define.noti4RtxServ.message, function(data)
 	{
 		func(data);
 	});
@@ -47,7 +47,7 @@ exports.connect = function(func)
 	this.send = function(data)
 	{
 		if(isConnected)
-			socket.emit(define.notiRtxMessage, data);
+			socket.emit(define.noti4RtxServ.message, data);
 	};
 };
 

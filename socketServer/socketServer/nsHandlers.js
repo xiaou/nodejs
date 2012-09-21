@@ -4,16 +4,13 @@
 var define = require("../define");
 
 
-var handle = {};
-handle[define.nsMoaRtx] = require("./handler" + define.nsMoaRtx.replace("/", "_"));
-//handle[define.nsXXXX] = require("./handler" + define.nsXXXX.replace("/", "_"));
-
-
 exports.handleAll = function(io)
 {
-	for(var namespace in handle)
+	var namespace;
+	for(var index in define.namespaces)
 	{
-		handle[namespace]( io.of(namespace) );
+		namespace = define.namespaces[index]; 
+		require("./handler" + namespace.replace("/", "_")) ( io.of(namespace) );
 	}
 };
 

@@ -1,7 +1,4 @@
-// auth.js
-
-
-var define = require("../define");
+// auth_moa_rtx.js
 
 
 /* 判断是否已经通过认证了. 返回结果到回调函数的布尔参数. */
