@@ -17,11 +17,9 @@ exports.noti4MoaRtx = {auth: "mrAuth", message: "mrMessage"};
 
 /// rtx client
 //
-// rtx server ip
-exports.rtxServerLocation = "http://127.0.0.1:8089/rtx";
-
-// rtx server and client notification names
-exports.noti4RtxServ = {message: "rsMessage"};
+exports.rtxServerLocation = {port: 8089, host: "127.0.0.1" };
+exports.rtxClientAddress = {family: 'IPv4', address: '127.0.0.1' };
+exports.rtxClientKeepAliveDelay = 10; /* tcp心跳包的心跳周期.秒. */
 
 // connect Interval when disconnect. seconds.
 exports.rtxServConnectInterval = 10;
