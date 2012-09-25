@@ -54,7 +54,6 @@ exports.connect = function(func)
 			try2Connect();
 		});
 		
-		//maybe not need "close" event~
 		socket.on("close", function(had_error)
 		{
 			isConnected = false;
@@ -64,7 +63,6 @@ exports.connect = function(func)
 		
 		socket.on("error", function(e)
 		{
-			isConnected = false;
 			console.log("error: error.code = " + e.code);
 		});
 		
