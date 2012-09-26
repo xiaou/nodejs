@@ -2,6 +2,7 @@
 
 var define = require("../define");
 var net = require("net"); // tcp.
+var logger = require("../logger").create(0, "log/log4rtxServClient.txt");
 
 
 var isConnected = false;
@@ -28,14 +29,14 @@ function try2Connect(cb_afterConn)
 		clearInterval(timer), timer = null;
 	timer = setInterval(function()
 	{
-		console.log("try to connect rtx server again...");
+		logger.warning("try to connect rtx server again...");
 		help2Connect(cb_afterConn);
 	}, 1000 * define.rtxServConnectInterval);
 }
 
 exports.connect = function(func)
 {
-	console.log("then will connect to rtx server...");
+	logger.info("then will connect to rtx server...");
 	
 	try2Connect(function(){
 		socket.on("connect",  function()
@@ -44,13 +45,13 @@ exports.connect = function(func)
 			if(timer)
 				clearInterval(timer), timer = null;
 			
-			console.log("connect to rtx server success~");
+			logger.info("connect to rtx server success~");
 		});
 		
 		socket.on("end", function()
 		{
 			isConnected = false;
-			console.log("disconnect to rtx server !~");
+			logger.info("disconnect to rtx server !~");
 			try2Connect();
 		});
 		
@@ -58,16 +59,17 @@ exports.connect = function(func)
 		{
 			isConnected = false;
 			if(had_error)
-				console.log("the socket was closed due to a transmission error. ");
+				logger.error("the socket was closed due to a transmission error. ");
 		});
 		
 		socket.on("error", function(e)
 		{
-			console.log("error: error.code = " + e.code);
+			logger.error("error: error.code = " + e.code);
 		});
 		
 		socket.on("data", function(data)
 		{
+			logger.debug("recv: " + data);
 			func(data);
 		});
 	});
@@ -75,7 +77,10 @@ exports.connect = function(func)
 	this.send = function(data)
 	{
 		if(isConnected)
+		{
+			logger.debug("send: " + data);
 			socket.write(data);
+		}
 	};
 };
 
