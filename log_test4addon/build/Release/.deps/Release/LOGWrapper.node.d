@@ -1,0 +1,1 @@
+cmd_Release/LOGWrapper.node := ln -f "Release/obj.target/LOGWrapper.node" "Release/LOGWrapper.node" 2>/dev/null || (rm -rf "Release/LOGWrapper.node" && cp -af "Release/obj.target/LOGWrapper.node" "Release/LOGWrapper.node")

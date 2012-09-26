@@ -1,10 +1,9 @@
 // test.js
 
-var handle;
+var addon = require("./hello");
 
 
-if(!handle)
-	console.log("see");
+console.log(addon.hello());
 
 
 
