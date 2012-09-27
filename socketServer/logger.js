@@ -1,3 +1,7 @@
+// logger.js 
+// version: 1.1.0
+
+
 var fs = require('fs');
  
 var cwd = process.cwd() + '/',
@@ -72,7 +76,6 @@ exports.create = function(level, file) {
 			if(!fs.existsSync(file)) 
 			{
 				console.log("the log file \'" + file + "\' is gone!!");
-				pos = 0;
 				fd = fs.openSync(file, 'a');
 			}
 		}
