@@ -11,8 +11,6 @@ DEFS_Debug := '-D_LARGEFILE_SOURCE' \
 CFLAGS_Debug := -Wall \
 	-pthread \
 	-m32 \
-	-I/usr/local/include -L/usr/local/lib -L. -lLOG -llog4cplus -ldl \
-	-I/usr/local/include -L/usr/local/lib -L. -lLOG -llog4cplus -ldl \
 	-g \
 	-O0
 
@@ -25,8 +23,7 @@ CFLAGS_CC_Debug := -fno-rtti \
 
 INCS_Debug := -I/home/spring/.node-gyp/0.8.8/src \
 	-I/home/spring/.node-gyp/0.8.8/deps/uv/include \
-	-I/home/spring/.node-gyp/0.8.8/deps/v8/include \
-	-I$(srcdir)/usr/local/include
+	-I/home/spring/.node-gyp/0.8.8/deps/v8/include
 
 DEFS_Release := '-D_LARGEFILE_SOURCE' \
 	'-D_FILE_OFFSET_BITS=64'
@@ -35,8 +32,6 @@ DEFS_Release := '-D_LARGEFILE_SOURCE' \
 CFLAGS_Release := -Wall \
 	-pthread \
 	-m32 \
-	-I/usr/local/include -L/usr/local/lib -L. -lLOG -llog4cplus -ldl \
-	-I/usr/local/include -L/usr/local/lib -L. -lLOG -llog4cplus -ldl \
 	-O2 \
 	-fno-strict-aliasing \
 	-fno-tree-vrp
@@ -50,8 +45,7 @@ CFLAGS_CC_Release := -fno-rtti \
 
 INCS_Release := -I/home/spring/.node-gyp/0.8.8/src \
 	-I/home/spring/.node-gyp/0.8.8/deps/uv/include \
-	-I/home/spring/.node-gyp/0.8.8/deps/v8/include \
-	-I$(srcdir)/usr/local/include
+	-I/home/spring/.node-gyp/0.8.8/deps/v8/include
 
 OBJS := $(obj).target/$(TARGET)/LOGWrapper.o
 
@@ -81,15 +75,14 @@ $(obj).$(TOOLSET)/$(TARGET)/%.o: $(obj)/%.cpp FORCE_DO_CMD
 ### Rules for final target.
 LDFLAGS_Debug := -pthread \
 	-rdynamic \
-	-m32 \
-	-LOG
+	-m32
 
 LDFLAGS_Release := -pthread \
 	-rdynamic \
-	-m32 \
-	-LOG
+	-m32
 
-LIBS := -ldl
+LIBS := ../libLOG.a \
+	-ldl
 
 $(obj).target/LOGWrapper.node: GYP_LDFLAGS := $(LDFLAGS_$(BUILDTYPE))
 $(obj).target/LOGWrapper.node: LIBS := $(LIBS)

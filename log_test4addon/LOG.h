@@ -17,6 +17,10 @@
 #include <string.h>
 #include <limits.h>
 
+
+
+static inline int testFunc(){ return 44; }
+
 ///
 typedef int LOGLEVEL;
 //级别由高到低:
@@ -51,6 +55,8 @@ void LOG_ERROR(const char * format, ...);
 void LOG_WARN(const char * format, ...);
 void LOG_INFO(const char * format, ...);
 void LOG_DEBUG(const char * format, ...);
+
+
 
 #endif
 

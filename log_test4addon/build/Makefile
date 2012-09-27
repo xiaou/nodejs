@@ -318,7 +318,7 @@ ifeq ($(strip $(foreach prefix,$(NO_LOAD),\
 endif
 
 quiet_cmd_regen_makefile = ACTION Regenerating $@
-cmd_regen_makefile = /home/spring/.node-gyp/0.8.8/tools/gyp/gyp -fmake --ignore-environment "--toplevel-dir=." -I/home/spring/myGits/nodejs/log/build/config.gypi -I/usr/local/lib/node_modules/node-gyp/addon.gypi -I/home/spring/.node-gyp/0.8.8/common.gypi "--depth=." "-Goutput_dir=." "--generator-output=build" "-Dlibrary=shared_library" "-Dvisibility=default" "-Dnode_root_dir=/home/spring/.node-gyp/0.8.8" "-Dmodule_root_dir=/home/spring/myGits/nodejs/log" binding.gyp
+cmd_regen_makefile = /home/spring/.node-gyp/0.8.8/tools/gyp/gyp -fmake --ignore-environment "--toplevel-dir=." -I/home/spring/myGits/nodejs/log_test4addon/build/config.gypi -I/usr/local/lib/node_modules/node-gyp/addon.gypi -I/home/spring/.node-gyp/0.8.8/common.gypi "--depth=." "-Goutput_dir=." "--generator-output=build" "-Dlibrary=shared_library" "-Dvisibility=default" "-Dnode_root_dir=/home/spring/.node-gyp/0.8.8" "-Dmodule_root_dir=/home/spring/myGits/nodejs/log_test4addon" binding.gyp
 Makefile: $(srcdir)/../../../.node-gyp/0.8.8/common.gypi $(srcdir)/build/config.gypi $(srcdir)/binding.gyp $(srcdir)/../../../../../usr/local/lib/node_modules/node-gyp/addon.gypi
 	$(call do_cmd,regen_makefile)
 

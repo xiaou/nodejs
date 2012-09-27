@@ -4,40 +4,33 @@
 	[
 	{
 
-"cflags": 
-["-I/usr/local/include -L/usr/local/lib -L. -lLOG -llog4cplus -ldl"],
 		
 		"target_name": "LOGWrapper",
 		"sources": ["LOGWrapper.cpp"],
-"libraries": [],
+		'libraries': ["LOG"],
+
+
+      'direct_dependent_settings': {
+        'conditions': [
+          ['OS=="linux"', {
+            'libraries': [ '-ldl', '../libLOG.a', '-lLOG' ],
+          }],
+        ],
+      },
+
+
+"libraries": ['../libLOG.a'],
 
 'conditions': [
           ['OS=="linux"', {
-'libraries': [
-            '-ldl',
-          ],
-
-'cflags':[
-'-I/usr/local/include -L/usr/local/lib -L. -lLOG -llog4cplus -ldl',
-],
-
-'libraries': [
-            '-ldl',
-          ],
-          'include_dirs': [
-            'usr/local/include',
-       	 ],
-
-            'ldflags': [
-              '-LOG',
-            ],
-
-          }],
-        ],
-
-
-	}
+			'libraries': [
+            '-ldl', '../libLOG.a'
+          	],
+		  }
+		]
 	]
-}
 
+}
+]
+}
 
