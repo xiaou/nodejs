@@ -17,7 +17,7 @@ exports.noti4MoaRtx = {auth: "mrAuth", message: "mrMessage"};
 
 /// rtx client
 //
-exports.rtxServerLocation = {port: 8089, host: "127.0.0.1" };
+exports.rtxServerLocation = {port: 8992, host: "10.6.11.106" };
 exports.rtxClientAddress = {family: 'IPv4', address: '127.0.0.1' };
 exports.rtxClientKeepAliveDelay = 10; /* tcp心跳包的心跳周期.秒. */
 

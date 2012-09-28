@@ -1,6 +1,6 @@
 // test.js
 
-var logger = require("./logger").create(0, "log1.txt");
+var logger = require("../socketServer/logger").create(0, "log1.txt");
 
 //var logger2 = require("./logger").create(0, "log1.txt");
 
