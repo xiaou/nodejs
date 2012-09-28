@@ -2,8 +2,8 @@
 
 var define = require("../define");
 var net = require("net"); // tcp.
-var logger = require("../logger").create(0, "log/log4rtxServClient.txt");
-
+var logger = require("../logger").create(define.logConfig.rtxServClient.level, 
+										define.logConfig.rtxServClient.filename);
 
 var isConnected = false;
 var socket;

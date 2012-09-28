@@ -23,3 +23,22 @@ exports.rtxClientKeepAliveDelay = 10; /* tcp心跳包的心跳周期.秒. */
 
 // connect Interval when disconnect. seconds.
 exports.rtxServConnectInterval = 10;
+
+
+/// log config.  see logger.js for the meaning.
+//
+exports.logConfig = 
+{
+	moa_rtx: 
+	{
+		level: 0,
+		filename: "log/log4moa_rtx.txt",
+	},
+	
+	rtxServClient: 
+	{
+		level: 0,
+		filename: "log/log4rtxServClient.txt"
+	}
+};
+

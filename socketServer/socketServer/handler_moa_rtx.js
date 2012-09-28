@@ -4,7 +4,10 @@
 var define = require("../define");
 var auth = require("./auth_moa_rtx");
 var rtxServClient = require("../rtxServClient/rtxServClient");
+var logger = require("../logger").create(define.logConfig.moa_rtx.level, 
+										define.logConfig.moa_rtx.filename);
 
+										
 module.exports = function(ioSockets)
 {
 	//
