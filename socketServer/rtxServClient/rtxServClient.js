@@ -12,6 +12,8 @@ var timer = null;
 
 function help2Connect(cb_afterConn)
 {
+	if(typeof socket !== 'undefined')
+		socket.destroy();
 	socket = net.connect( {port: define.rtxServerLocation.port, 
 						   host: define.rtxServerLocation.host,
 						   localAddress: define.rtxClientAddress
@@ -34,10 +36,9 @@ function try2Connect(cb_afterConn)
 	}, 1000 * define.rtxServConnectInterval);
 }
 
-exports.connect = function(func)
+exports.connect = function(funcRecvData)
 {
 	logger.info("then will connect to rtx server...");
-	
 	try2Connect(function(){
 		socket.on("connect",  function()
 		{
@@ -46,6 +47,8 @@ exports.connect = function(func)
 				clearInterval(timer), timer = null;
 			
 			logger.info("connect to rtx server success~");
+			
+			funcRecvData({ type: "connect" });
 		});
 		
 		socket.on("end", function()
@@ -68,20 +71,24 @@ exports.connect = function(func)
 		});
 		
 		socket.on("data", function(data)
-		{
+		{/** received data from tcp server in oa area. */
 			logger.debug("recv: " + data);
-			func(data);
+			funcRecvData(data);
 		});
 	});
-		
-	this.send = function(data)
-	{
-		if(isConnected)
-		{
-			logger.debug("send: " + data);
-			socket.write(data);
-		}
-	};
+	
+	return this;
 };
 
 
+/** send data to the tcp server in oa area. */
+exports.connect.prototype.send = exports.send = function(data)
+{
+	if(isConnected)
+	{
+		logger.debug("send: " + data);
+		socket.write(data);
+	}
+};
+	
+	

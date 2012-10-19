@@ -27,6 +27,8 @@ function getPos() {
 	try {
 		throw new Error();
 	} catch(e) {
+		if(e.stack.split('\n')[4].split('(').length < 2)
+			return "";
 		var pos = e.stack.split('\n')[4].split('(')[1].split(')')[0].split(':');
 		return pos[0].replace(cwd, '') + ':' + pos[1];
 	}

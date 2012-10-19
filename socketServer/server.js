@@ -10,6 +10,7 @@ var socketServer = require("./socketServer/socketServer");
 function run()
 {
 	var port = define.serverPort;
+	var host = define.serverHost;
 	
 	function onRequest(request, response)
 	{
@@ -26,7 +27,7 @@ function run()
 	};
 
 	httpsServer = https.createServer(options, onRequest);
-	httpsServer.listen(port);	
+	httpsServer.listen(port, host);	
 	console.log("https server is running on port: " + port);
 	
 	socketServer.create(httpsServer);

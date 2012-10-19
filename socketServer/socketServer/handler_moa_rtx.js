@@ -7,22 +7,45 @@ var rtxServClient = require("../rtxServClient/rtxServClient");
 var logger = require("../logger").create(define.logConfig.moa_rtx.level, 
 										define.logConfig.moa_rtx.filename);
 
-										
+function ClientRoom()
+{
+	//If don't set those property, typeof they === 'undefined'.
+	//so when recv moa client's auth pkg, set those.
+	name = " It's the room of socket.io. ";
+	data = " It's data that the rtx serv care. ";
+}
+						
 module.exports = function(ioSockets)
 {
+	/** key: socket. value: ClientRoom. @note: value may be same in diffirent key. */
+	var clients = {};
+
 	//
-	var rtxServConn = rtxServClient.connect(function(data)
-	{// receive data from rtxServ
-		ioSockets.in(data.user/*'namespace' of socket.io*/).emit(
-					define.noti4MoaRtx.message, data.data);
+	rtxServClient.connect(function(data) 
+	{/** received data from tcp server in oa area. */
+		if(data.type == "connect")
+		{
+			var rooms = {};
+			for(var so_ in clients)
+			{
+				if(typeof clients[so_].name !== 'undefined')
+					rooms[ clients[so_].name ] = clients[so_].data;
+			}
+			rtxServClient.send(rooms);
+		}
+		else
+		{
+			ioSockets.in(data.user/*'room' of socket.io*/).emit(
+						define.noti4MoaRtx.message, data.data);
+					
+		}
 	});
 	
 	//
-	var clients = [];
-	
 	ioSockets.on("connection", function(socket)
 	{
-		clients.push(socket);
+		//clients.push(socket);
+		clients[socket] = new ClientRoom();
 		
 		var timer = setTimeout(function() 
 		{
@@ -37,7 +60,8 @@ module.exports = function(ioSockets)
 		
 		socket.on("disconnect", function()
 		{
-			clients.splice(clients.indexOf(socket), 1);
+			//clients.splice(clients.indexOf(socket), 1);
+			delete clients[socket];
 		});
 		
 		socket.on(define.noti4MoaRtx.auth, function(data)
@@ -63,9 +87,9 @@ module.exports = function(ioSockets)
 			{
 				if(isHasAuth)
 				{
-					//传递data到rtxServer
+					//send data to the tcp server in oa area.
 					//....
-					rtxServConn.send(data);
+					rtxServClient.send(data);
 				}
 				else
 				{//居然没发auth包就发来了message包.直接断开这个连接.

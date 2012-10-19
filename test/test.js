@@ -1,20 +1,15 @@
 // test.js
 
-var logger = require("../socketServer/logger").create(0, "log1.txt");
-
-//var logger2 = require("./logger").create(0, "log1.txt");
 
 
-for(var i = 0; i != 10; i++)
+function func()
 {
-	logger.info("see: " + i);
-	//logger2.debug("see: " + i);
+	this.send = function(){
+		console.log("xx");
+	}
+	
+	return this;
 }
 
-setTimeout(function(){
-	console.log("time out");
-}, 1000 * 10);
-
-//while(1);
-
+func().send();
 

@@ -4,6 +4,7 @@
 /// this server
 //
 exports.serverPort = 8100;
+exports.serverHost = "0.0.0.0";
 
 //'namespace' of socket.io for nsHandlers.js and handler_*.js
 exports.namespaces = ["/moa_rtx"]; 
@@ -32,13 +33,13 @@ exports.logConfig =
 	moa_rtx: 
 	{
 		level: 0,
-		filename: "log/log4moa_rtx.txt",
+		filename: 0//"log/log4moa_rtx.txt",
 	},
 	
 	rtxServClient: 
 	{
 		level: 0,
-		filename: "log/log4rtxServClient.txt"
+		filename: 0//"log/log4rtxServClient.txt"
 	}
 };
 
