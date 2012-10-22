@@ -118,3 +118,7 @@ exports.create = function(level, file) {
 		trace : function(msg) {log(TRACE, msg);},
 	};
 }
+
+var define = require("./define");
+exports.log = exports.create(define.logConfig.level, define.logConfig.filename);
+

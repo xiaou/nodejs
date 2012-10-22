@@ -1,15 +1,14 @@
 // test.js
 
 
+var nu = null;
+//console.log(nu);
+var bo = false;
 
-function func()
-{
-	this.send = function(){
-		console.log("xx");
-	}
-	
-	return this;
-}
+console.log(bo);
 
-func().send();
+if(nu == bo)
+	console.log("nu == bo!");
 
+if(!nu)
+	console.log("ddd");

@@ -1,12 +1,14 @@
 // auth_moa_rtx.js
 
+var log = require('../logger').log;
+
 
 /* 判断是否已经通过认证了. 返回结果到回调函数的布尔参数. */
 exports.hasAuth = function(socket, func)
 {
 	socket.get("auth", function(err, isOK)
 	{
-		if(err || isOK == false)
+		if(err != null || isOK == false || isOK == null)
 			func(false);
 		else
 			func(true);

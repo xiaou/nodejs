@@ -2,8 +2,8 @@
 
 var define = require("../define");
 var net = require("net"); // tcp.
-var logger = require("../logger").create(define.logConfig.rtxServClient.level, 
-										define.logConfig.rtxServClient.filename);
+var log = require("../logger").log;
+
 
 var isConnected = false;
 var socket;
@@ -31,14 +31,15 @@ function try2Connect(cb_afterConn)
 		clearInterval(timer), timer = null;
 	timer = setInterval(function()
 	{
-		logger.warning("try to connect rtx server again...");
+		log.warning("try to connect rtx server again...");
 		help2Connect(cb_afterConn);
 	}, 1000 * define.rtxServConnectInterval);
 }
 
 exports.connect = function(funcRecvData)
 {
-	logger.info("then will connect to rtx server...");
+return this; // test....
+	log.info("then will connect to rtx server...");
 	try2Connect(function(){
 		socket.on("connect",  function()
 		{
@@ -46,7 +47,7 @@ exports.connect = function(funcRecvData)
 			if(timer)
 				clearInterval(timer), timer = null;
 			
-			logger.info("connect to rtx server success~");
+			log.info("connect to rtx server success~");
 			
 			funcRecvData({ type: "connect" });
 		});
@@ -54,7 +55,7 @@ exports.connect = function(funcRecvData)
 		socket.on("end", function()
 		{
 			isConnected = false;
-			logger.info("disconnect to rtx server !~");
+			log.info("disconnect to rtx server !~");
 			try2Connect();
 		});
 		
@@ -62,17 +63,17 @@ exports.connect = function(funcRecvData)
 		{
 			isConnected = false;
 			if(had_error)
-				logger.error("the socket was closed due to a transmission error. ");
+				log.error("the socket was closed due to a transmission error. ");
 		});
 		
 		socket.on("error", function(e)
 		{
-			logger.error("error: error.code = " + e.code);
+			log.error("error: error.code = " + e.code);
 		});
 		
 		socket.on("data", function(data)
 		{/** received data from tcp server in oa area. */
-			logger.debug("recv: " + data);
+			log.debug("recv: " + data);
 			funcRecvData(data);
 		});
 	});
@@ -86,7 +87,7 @@ exports.connect.prototype.send = exports.send = function(data)
 {
 	if(isConnected)
 	{
-		logger.debug("send: " + data);
+		log.debug("send: " + data);
 		socket.write(data);
 	}
 };

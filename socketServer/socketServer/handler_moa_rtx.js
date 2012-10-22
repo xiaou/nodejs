@@ -4,8 +4,7 @@
 var define = require("../define");
 var auth = require("./auth_moa_rtx");
 var rtxServClient = require("../rtxServClient/rtxServClient");
-var logger = require("../logger").create(define.logConfig.moa_rtx.level, 
-										define.logConfig.moa_rtx.filename);
+var log = require("../logger").log;
 
 function ClientRoom()
 {
@@ -37,7 +36,6 @@ module.exports = function(ioSockets)
 		{
 			ioSockets.in(data.user/*'room' of socket.io*/).emit(
 						define.noti4MoaRtx.message, data.data);
-					
 		}
 	});
 	

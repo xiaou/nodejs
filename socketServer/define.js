@@ -10,7 +10,7 @@ exports.serverHost = "0.0.0.0";
 exports.namespaces = ["/moa_rtx"]; 
 
 // auth timeout. seconds.
-exports.authTimeOut = 60;
+exports.authTimeOut = 4;
 
 // socket server and client notification names for moa rtx.
 exports.noti4MoaRtx = {auth: "mrAuth", message: "mrMessage"};
@@ -30,16 +30,7 @@ exports.rtxServConnectInterval = 10;
 //
 exports.logConfig = 
 {
-	moa_rtx: 
-	{
-		level: 0,
-		filename: 0//"log/log4moa_rtx.txt",
-	},
-	
-	rtxServClient: 
-	{
-		level: 0,
-		filename: 0//"log/log4rtxServClient.txt"
-	}
+	level: 0,
+	filename: 0//"log/log4rtxServClient.txt"
 };
 
