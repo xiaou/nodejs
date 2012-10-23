@@ -2,6 +2,7 @@
 
 
 var define = require("../define");
+var msgProtocal = require("./msgProtocal");
 var auth = require("./auth_moa_rtx");
 var rtxServClient = require("../rtxServClient/rtxServClient");
 var log = require("../logger").log;
@@ -62,12 +63,12 @@ module.exports = function(ioSockets)
 			delete clients[socket];
 		});
 		
-		socket.on(define.noti4MoaRtx.auth, function(data)
+		socket.on(msgProtocal.moa_rtx.auth, function(data)
 		{
 			clearTimeout(timer), timer = null;
-			auth.checkAuth(socket, data.auth, function(isOK)
+			auth.checkAuth(socket, data, function(isOK)
 			{
-				socket.emit(define.noti4MoaRtx.auth, isOK);//send back to client.
+				socket.emit(msgProtocal.moa_rtx.auth, isOK);//send back to client.
 				
 				if(isOK)
 				{//auth success. Then, join the user to the room.
@@ -75,16 +76,25 @@ module.exports = function(ioSockets)
 					socket.join(user);
 				}
 				else
+				{
 					socket.disconnect();
+				}
 			});
 		});
 		
-		socket.on(define.noti4MoaRtx.message, function(data)
+		socket.on(msgProtocal.moa_rtx.message, function(data)
 		{
 			auth.hasAuth(socket, function(isHasAuth)
 			{
 				if(isHasAuth)
 				{
+					if(define.UDebug)
+					{
+						console.log(data);
+						socket.emit(msgProtocal.moa_rtx.message, data);
+						return;
+					}
+					
 					//send data to the tcp server in oa area.
 					//....
 					rtxServClient.send(data);

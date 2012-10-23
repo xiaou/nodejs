@@ -1,7 +1,6 @@
 // index.js
 
 
-var svr = require("./server").run();
-
-
+var svr = require("./httpServer/server").create();
+require("./socketServer/socketServer").run(svr);
 

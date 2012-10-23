@@ -1,14 +1,21 @@
 // test.js
 
 
-var nu = null;
-//console.log(nu);
-var bo = false;
+var fn = function(){
+	this.UDebug = true;
+	
+	this.send = function(){
+		console.log("send~");
+	}
+	
+	return this;
+}(); 
 
-console.log(bo);
+console.log(fn.UDebug);
 
-if(nu == bo)
-	console.log("nu == bo!");
+fn.send();
 
-if(!nu)
-	console.log("ddd");
+if(fn.UDebug)
+	console.log("true");
+
+	

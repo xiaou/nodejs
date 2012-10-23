@@ -6,7 +6,7 @@ var log = require('../logger').log;
 /* 判断是否已经通过认证了. 返回结果到回调函数的布尔参数. */
 exports.hasAuth = function(socket, func)
 {
-	socket.get("auth", function(err, isOK)
+	socket.get("_auth", function(err, isOK)
 	{
 		if(err != null || isOK == false || isOK == null)
 			func(false);
@@ -26,7 +26,7 @@ exports.checkAuth = function(socket, data, func)
 		result = true;
 	}
 	
-	socket.set("auth", result, function()
+	socket.set("_auth", result, function()
 	{
 		func(result);
 	});

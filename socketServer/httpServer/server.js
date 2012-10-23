@@ -1,13 +1,13 @@
 // server.js
 
 
-var define = require("./define");
+var define = require("../define");
 var https = require("https");
 var url = require("url");
 var fs = require("fs");
-var socketServer = require("./socketServer/socketServer");
+var socketServer = require("../socketServer/socketServer");
 
-function run()
+function create()
 {
 	var port = define.serverPort;
 	var host = define.serverHost;
@@ -28,10 +28,10 @@ function run()
 
 	httpsServer = https.createServer(options, onRequest);
 	httpsServer.listen(port, host);	
-	console.log("https server is running on port: " + port);
+	console.log("https server is running on " + host + ":" + port);
 	
-	socketServer.create(httpsServer);
+	return httpsServer;
 }
 
-exports.run = run;
+exports.create = create;
 
