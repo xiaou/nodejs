@@ -27,9 +27,9 @@ this.authTimeOut = 4;
 
 /// rtx client
 //
-this.rtxServerLocation = {port: 8992, host: "10.6.11.106" };
+this.rtxServerLocation = {port: 18896, host: "10.6.11.106" };
 this.rtxClientAddress = {family: 'IPv4', address: '127.0.0.1' };
-this.rtxClientKeepAliveDelay = 10; /* tcp心跳包的心跳周期.秒. */
+this.rtxClientKeepAliveDelay = 1; /* tcp心跳包的心跳周期.秒. */
 
 // connect Interval when disconnect. seconds.
 this.rtxServConnectInterval = 10;

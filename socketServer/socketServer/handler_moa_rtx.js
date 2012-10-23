@@ -26,11 +26,53 @@ module.exports = function(ioSockets)
 		if(data.type == "connect")
 		{
 			var rooms = {};
-			for(var so_ in clients)
+			if(define.UDebug)
 			{
-				if(typeof clients[so_].name !== 'undefined')
-					rooms[ clients[so_].name ] = clients[so_].data;
+				if(define.EDebug)
+				rooms = {};
+				else
+				rooms = {
+						 ReqType: 3,
+						 NotificationList:
+						 [
+						 {
+						 Key: 'ID1',
+						 Value:
+						 {
+						 MsgId: '{62A029CB-6046-45A9-9665-F75B518F991E}', 
+						 UserName: 'herolin'
+						 }
+						 },
+						 
+						 {
+						 Key: 'ID2',
+						 Value:
+						 {
+						 MsgId: '{3D2968F6-99A0-4FA7-8A3D-5218809CCA6B}', 
+						 UserName: 'gradyguo'
+						 }
+						 },
+						 
+						 {
+						 Key: 'ID3',
+						 Value:
+						 {
+						 MsgId: '{AD11C3C1-73E3-4AED-A4B0-3F8350F9CDC7}', 
+						 UserName: 'allan'
+						 }
+						 }
+						 ]
+						};
 			}
+			else
+			{
+				for(var so_ in clients)
+				{
+					if(typeof clients[so_].name !== 'undefined')
+						rooms[ clients[so_].name ] = clients[so_].data;
+				}
+			}
+			
 			rtxServClient.send(rooms);
 		}
 		else
