@@ -6,13 +6,14 @@ var msgProtocal = require("./msgProtocal");
 var auth = require("./auth_moa_rtx");
 var rtxServClient = require("../rtxServClient/rtxServClient");
 var log = require("../logger").log;
+var util = require("util");
 
 function ClientRoom()
 {
 	//If don't set those property, typeof they === 'undefined'.
 	//so when recv moa client's auth pkg, set those.
-	name = " It's the room of socket.io. ";
-	data = " It's data that the rtx serv care. ";
+	name = " It's the room of socket.io and It's Key of list send to rtx serv. ";
+	data = " It's Value that the rtx serv care. ";
 }
 						
 module.exports = function(ioSockets)
@@ -21,48 +22,29 @@ module.exports = function(ioSockets)
 	var clients = {};
 
 	//
-	rtxServClient.connect(function(data) 
-	{/** received data from tcp server in oa area. */
-		if(data.type == "connect")
+	rtxServClient.connect(function(objData) 
+	{/** received object data from tcp server in oa area. */
+		if(objData.type == "connect")
 		{
-			var rooms = {};
 			if(define.UDebug)
 			{
-				if(define.EDebug)
-				rooms = {};
-				else
+				var type = 3;
+				var list = [];
+				for(var i = 0; i != 10; i++)
+				{
+					list.push( {
+							 Key: 'ID1',
+							 Value:
+							 {
+							 MsgId: '{62A029CB-6046-45A9-9665-F75B518F991E}', 
+							 UserName: 'herolin'
+							 }
+							 } );
+				}
 				rooms = {
-						 ReqType: 3,
-						 NotificationList:
-						 [
-						 {
-						 Key: 'ID1',
-						 Value:
-						 {
-						 MsgId: '{62A029CB-6046-45A9-9665-F75B518F991E}', 
-						 UserName: 'herolin'
-						 }
-						 },
-						 
-						 {
-						 Key: 'ID2',
-						 Value:
-						 {
-						 MsgId: '{3D2968F6-99A0-4FA7-8A3D-5218809CCA6B}', 
-						 UserName: 'gradyguo'
-						 }
-						 },
-						 
-						 {
-						 Key: 'ID3',
-						 Value:
-						 {
-						 MsgId: '{AD11C3C1-73E3-4AED-A4B0-3F8350F9CDC7}', 
-						 UserName: 'allan'
-						 }
-						 }
-						 ]
-						};
+						 ReqType: type,
+						 NotificationList: list
+					};
 			}
 			else
 			{
@@ -76,9 +58,15 @@ module.exports = function(ioSockets)
 			rtxServClient.send(rooms);
 		}
 		else
-		{
-			ioSockets.in(data.user/*'room' of socket.io*/).emit(
-						define.noti4MoaRtx.message, data.data);
+		{//recv object data from rtx serv.
+			if(define.UDebug)
+			{
+				for(var i in objData)
+					log.debug("see :" + util.format("%j", objData[i]));
+			}
+			else
+			ioSockets.in(objData.user/*'room' of socket.io*/).emit(
+						define.noti4MoaRtx.message, objData.data);
 		}
 	});
 	

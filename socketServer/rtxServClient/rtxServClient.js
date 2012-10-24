@@ -3,6 +3,7 @@
 var define = require("../define");
 var net = require("net"); // tcp.
 var log = require("../logger").log;
+var util = require("util"); 
 
 
 var isConnected = false;
@@ -24,6 +25,15 @@ function help2Connect()
 	onEvent();
 }
 
+function help2Restart(){
+	if(isConnected)
+	{
+		isConnected = false;
+		log.info("disconnect to rtx server !~");
+		try2Connect();
+	}
+}
+
 function try2Connect()
 {
 	help2Connect();
@@ -32,7 +42,7 @@ function try2Connect()
 		clearInterval(timer), timer = null;
 	timer = setInterval(function()
 	{
-		log.warning("try to connect rtx server again...");
+		log.info("try to connect rtx server again...");
 		help2Connect();
 	}, 1000 * define.rtxServConnectInterval);
 }
@@ -51,27 +61,54 @@ function onEvent(){
 	
 	socket.on("end", function()
 	{
-		isConnected = false;
-		log.info("disconnect to rtx server !~");
-		try2Connect();
+		log.debug("on end");
+		help2Restart();
 	});
 	
 	socket.on("close", function(had_error)
 	{
-		isConnected = false;
+		log.debug("on close");
 		if(had_error)
 			log.error("the socket was closed due to a transmission error. ");
+		help2Restart();
 	});
 	
 	socket.on("error", function(e)
 	{
+		log.debug("on error");
 		log.error("error: error.code = " + e.code);
 	});
 	
-	socket.on("data", function(data)
+	var aData = new Buffer(0);
+	
+	socket.on("data", function(data /**< it's 'Buffer' obj. */)
 	{/** received data from tcp server in oa area. */
-		log.debug("recv: " + data);
-		_funcRecvData(data);
+		aData = Buffer.concat([aData, data]);
+		
+		var len = aData.readUInt32BE(0);
+		var strRes;
+		while(aData.length > 3 && aData.length >= len)
+		{
+			strRes = aData.toString('utf8', 4, len);
+			aData = aData.slice(len);
+			
+			if(define.UDebug)
+			{
+				log.debug("on data-see(I got): " + len + strRes);
+			}
+			
+			//_funcRecvData(JSON.parse(strRes));
+			
+			// continue:
+			len = aData.readUInt32BE(0, true);
+		}
+	});
+	
+	
+	socket.on("drain", function()
+	{
+		if(define.UDebug)
+			log.debug( "on drain. " + socket.bytesWritten + " bytesWritten" );
 	});
 }
 
@@ -85,25 +122,45 @@ exports.connect = function(funcRecvData)
 };
 
 /** send data to the tcp server in oa area. */
-exports.connect.prototype.send = exports.send = function(data)
+exports.connect.prototype.send = exports.send = function(objData)
 {
 	if(isConnected)
 	{
-		var str = require('util').format('%j', data);
+		var str = util.format('%j', objData);
+		log.debug("the str will be sending, it's length is " + str.length);
 		
+		var bufArray = [];
+		var buf = new Buffer(4);
+		buf.writeUInt32BE(str.length + 4, 0);
+		bufArray.push(buf);
+		var _len = str.length;
+		var _len2;
+		var _pos = 0;
+		var _maxOnce = 1000;
+		while(_len > 0)
+		{
+			_len2 = _len < _maxOnce ? _len : _maxOnce;
+			buf = new Buffer(_len2);
+			buf.write(str.substr(_pos, _len2 ), 0, _len2);
+			bufArray.push(buf);
+			_pos = _pos + _len2;
+			_len = _len - _len2;
+		} 
+		
+		for(var i in bufArray)
+
 		if(define.UDebug)
 		{
-			log.debug("send:\n" + str);
-			setInterval(function(){
-				var b = socket.write(str, 'utf8', function(d){
-					log.debug("has writen to Grady.");
+			//log.debug("send:\n" + str);
+			//setInterval(function(){
+				var b = socket.write(bufArray[i], 'utf8', function(d){
+					//log.debug("has writen to Grady. " + socket.bytesWritten + "bytesWritten");
 				});
-				log.debug("write() return: " + b);
-			}, 1000 * 5);
+				//log.debug("write() return: " + b + ". " + socket.bytesWritten + "bytesWritten");
+			//}, 1000 * 5);
 		}
 		else
-			socket.write(str);
+			socket.write(bufArray[i]);
 	}
 };
-	
 	
