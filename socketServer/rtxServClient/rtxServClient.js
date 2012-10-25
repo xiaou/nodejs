@@ -87,14 +87,23 @@ function onEvent(){
 		
 		var len = aData.readUInt32BE(0);
 		var strRes;
+		var eb;//end byte.
 		while(aData.length > 3 && aData.length >= len)
 		{
-			strRes = aData.toString('utf8', 4, len);
+			//检验结束符
+			eb = aData.readInt8(len - 1);
+			if(eb !== define.endByte)
+			{
+				help2Restart();
+				break;
+			}
+		
+			strRes = aData.toString('utf8', 4, len-1);
 			aData = aData.slice(len);
 			
 			if(define.UDebug)
 			{
-				log.debug("on data-see(I got): " + len + strRes);
+				log.debug("on data-see(I got): " + len + strRes + "EndByte");
 			}
 			
 			//_funcRecvData(JSON.parse(strRes));
@@ -131,12 +140,16 @@ exports.connect.prototype.send = exports.send = function(objData)
 		
 		var bufArray = [];
 		var buf = new Buffer(4);
-		buf.writeUInt32BE(str.length + 4, 0);
+		buf.writeUInt32BE(str.length + 4 + 1 , 0);
+		if(define.EDebug)
+		{
+			buf.writeUInt32BE(str.length + 4 + 1 , 0);
+		}
 		bufArray.push(buf);
 		var _len = str.length;
 		var _len2;
 		var _pos = 0;
-		var _maxOnce = 1000;
+		var _maxOnce = 10000;
 		while(_len > 0)
 		{
 			_len2 = _len < _maxOnce ? _len : _maxOnce;
@@ -147,20 +160,54 @@ exports.connect.prototype.send = exports.send = function(objData)
 			_len = _len - _len2;
 		} 
 		
-		for(var i in bufArray)
-
+		var bufEndByte = new Buffer(1);
+		bufEndByte.writeInt8(define.endByte, 0);
+		bufArray[bufArray.length - 1] = Buffer.concat([bufArray[bufArray.length - 1], bufEndByte]);
+		/*
+		if(define.EDebug)
+		{
+			bufArray[0] = Buffer.concat([bufArray[0], bufArray[1]]);
+			bufArray.splice(1, 1);
+		}
+		*/
 		if(define.UDebug)
 		{
-			//log.debug("send:\n" + str);
-			//setInterval(function(){
-				var b = socket.write(bufArray[i], 'utf8', function(d){
-					//log.debug("has writen to Grady. " + socket.bytesWritten + "bytesWritten");
+			if(define.EDebug)
+			{
+				var bufList = [];
+				console.log("开始构造bufList...");
+				for(var i = 0; i != 3; i++)
+				{
+					console.log("添加" + (i+1) + '次:');
+					bufList.push( Buffer.concat(bufArray) );
+				}console.log("完成！");
+				
+				var bufferAll = Buffer.concat(bufList);
+				console.log( util.format("%s", bufferAll) );
+				
+				var b = socket.write(bufferAll, 'utf8', function(d){
+					log.debug("has writen to Grady. " + socket.bytesWritten + "bytesWritten")
 				});
-				//log.debug("write() return: " + b + ". " + socket.bytesWritten + "bytesWritten");
-			//}, 1000 * 5);
+				log.debug("write() return: " + b + ". " + socket.bytesWritten + "bytesWritten");
+			}
+			else
+			{
+				//setInterval(function(){
+				for(var i in bufArray)
+				{
+					var b = socket.write(bufArray[i], 'utf8', function(d){
+						//log.debug("has writen to Grady. " + socket.bytesWritten + "bytesWritten");
+					});
+					//log.debug("write() return: " + b + ". " + socket.bytesWritten + "bytesWritten");
+				}
+				//}, 1000 * 5);
+			}
 		}
 		else
-			socket.write(bufArray[i]);
+		{
+			for(var i in bufArray)
+				socket.write(bufArray[i]);
+		}
 	}
 };
 	

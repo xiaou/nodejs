@@ -30,7 +30,7 @@ module.exports = function(ioSockets)
 			{
 				var type = 3;
 				var list = [];
-				for(var i = 0; i != 10; i++)
+				for(var i = 0; i != 1; i++)
 				{
 					list.push( {
 							 Key: 'ID1',

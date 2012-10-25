@@ -10,6 +10,11 @@ this.UDebug = true;
 this.EDebug = true;
 
 
+/// 数据包结尾校验字节符
+//
+this.endByte = 3;//0x03
+
+
 /// this server
 //
 this.serverPort = 8100;
