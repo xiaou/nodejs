@@ -103,10 +103,10 @@ function onEvent(){
 			
 			if(define.UDebug)
 			{
-				log.debug("on data-see(I got): " + len + strRes + "EndByte");
+				log.debug("on data(I got): " + len + strRes + "EndByte");
 			}
 			
-			//_funcRecvData(JSON.parse(strRes));
+			_funcRecvData(JSON.parse(strRes));
 			
 			// continue:
 			len = aData.readUInt32BE(0, true);
@@ -136,20 +136,16 @@ exports.connect.prototype.send = exports.send = function(objData)
 	if(isConnected)
 	{
 		var str = util.format('%j', objData);
-		log.debug("the str will be sending, it's length is " + str.length);
+		log.debug("the str will be sending, length = " + str.length + ", content is:[" + str.substr(0, 20) + "...]");
 		
 		var bufArray = [];
 		var buf = new Buffer(4);
 		buf.writeUInt32BE(str.length + 4 + 1 , 0);
-		if(define.EDebug)
-		{
-			buf.writeUInt32BE(str.length + 4 + 1 , 0);
-		}
 		bufArray.push(buf);
 		var _len = str.length;
 		var _len2;
 		var _pos = 0;
-		var _maxOnce = 10000;
+		var _maxOnce = 1000;
 		while(_len > 0)
 		{
 			_len2 = _len < _maxOnce ? _len : _maxOnce;
@@ -163,16 +159,16 @@ exports.connect.prototype.send = exports.send = function(objData)
 		var bufEndByte = new Buffer(1);
 		bufEndByte.writeInt8(define.endByte, 0);
 		bufArray[bufArray.length - 1] = Buffer.concat([bufArray[bufArray.length - 1], bufEndByte]);
-		/*
-		if(define.EDebug)
+		
+		if(bufArray.length > 1)
 		{
 			bufArray[0] = Buffer.concat([bufArray[0], bufArray[1]]);
 			bufArray.splice(1, 1);
 		}
-		*/
+		
 		if(define.UDebug)
 		{
-			if(define.EDebug)
+			/*if(define.EDebug)
 			{
 				var bufList = [];
 				console.log("开始构造bufList...");
@@ -191,7 +187,7 @@ exports.connect.prototype.send = exports.send = function(objData)
 				log.debug("write() return: " + b + ". " + socket.bytesWritten + "bytesWritten");
 			}
 			else
-			{
+			*/{
 				//setInterval(function(){
 				for(var i in bufArray)
 				{

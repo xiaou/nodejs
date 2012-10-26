@@ -4,13 +4,23 @@ var socket = io.connect(
 );
 
 var timer;
-var counter = 0;
 
 socket.on("connect", function(){
 	log("You connected~.");
 	
 	//send auth msg.
-	socket.emit(msgProtocal.moa_rtx.auth, 'this is the auth data of moa rtx client');
+	var id4UserPage = 'allanchen_page1';
+	socket.emit(msgProtocal.moa_rtx.auth, 
+	{
+		Auth: HmacSHA256.hash(id4UserPage, msgProtocal.SecretPassphrase),
+		Key: id4UserPage,
+		Value:
+		{
+			MsgId: '{62A029CB-6046-45A9-9665-F75B518F991E}', 
+			UserName: 'allanchen'
+		}
+	}
+	);
 });
 
 //recv auth result.
@@ -18,26 +28,20 @@ socket.on(msgProtocal.moa_rtx.auth, function(data){
 	if(data === true)
 	{
 		log("auth success~");
-		timer = setInterval('testSending()', 2000);
+		socket.emit(msgProtocal.moa_rtx.message, "this is test data sending by MOA client");
+		timer = setInterval('testClosing()', 20 * 1000);
 	}
 	else
 		log("auth faild!!");
 });
 
-function testSending(){
-	socket.emit(msgProtocal.moa_rtx.message, {a: 'b', c: 'd'});
-	
-	log(counter++);
-	if(counter === 3)
-	{
-		clearInterval(timer);
-		counter = 0;
-		socket.disconnect();
-	}
+function testClosing(){
+	clearInterval(timer);
+	socket.disconnect();
 }
 
 socket.on(msgProtocal.moa_rtx.message, function(data){
-	log('recv: ' + '{a: ' + data.a + ', c: ' + data.c);
+	console.log(data);
 });
 
 socket.on('disconnect', function() { 

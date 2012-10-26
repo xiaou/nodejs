@@ -4,7 +4,7 @@
 
 exports.moa_rtx = {auth: 'mrAuth', message: 'mrMessage'};
 
-
+exports.SecretPassphrase = 'whosyourdaddy';
 
 
 
