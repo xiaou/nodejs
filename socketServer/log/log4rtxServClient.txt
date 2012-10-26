@@ -1,8 +1,0 @@
-2012-09-28 18:54:35 [INFO] then will connect to rtx server... [rtxServClient/rtxServClient.js:39]
-2012-09-28 18:54:35 [ERROR] error: error.code = ECONNREFUSED [rtxServClient/rtxServClient.js:67]
-2012-09-28 18:54:35 [ERROR] the socket was closed due to a transmission error.  [rtxServClient/rtxServClient.js:62]
-2012-10-19 10:10:56 [INFO] then will connect to rtx server... [rtxServClient/rtxServClient.js:39]
-2012-10-19 10:11:06 [WARNING] try to connect rtx server again... [rtxServClient/rtxServClient.js:32]
-2012-10-19 10:11:16 [WARNING] try to connect rtx server again... [rtxServClient/rtxServClient.js:32]
-2012-10-19 11:33:49 [INFO] then will connect to rtx server... [rtxServClient/rtxServClient.js:39]
-2012-10-19 15:56:47 [INFO] then will connect to rtx server... [rtxServClient/rtxServClient.js:39]
