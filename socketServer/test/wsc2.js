@@ -1,6 +1,6 @@
 
 var socket = io.connect(
-"https://localhost:8100/moa_rtx"
+"https://10.13.64.98:8100/moa_rtx"
 );
 
 var timer;

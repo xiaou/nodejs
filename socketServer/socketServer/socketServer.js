@@ -8,8 +8,9 @@ var nsHandlers = require("./nsHandlers");
 exports.run = function(httpServer)
 {
 	var io = socketio.listen(httpServer
-						, {log: false}
+						, {log: false} 
 						);
+	
 	console.log("socketServer is listening...");
 	
 	//run all sub servers(as 'namespace' of 'socket.io').
