@@ -17,10 +17,12 @@ this.endByte = 3;//0x03
 
 /// this server
 //
+this.isHttps = false;
+//
 this.serverPort = 8100;
 //this.serverHost = '0.0.0.0';
 this.serverHost = "10.13.64.98";
-//this.serverHost = "10.66.80.91";//free wifi
+//this.serverHost = "10.66.80.66";//free wifi
 
 //'namespace' of socket.io for nsHandlers.js and handler_*.js
 this.namespaces = ["/moa_rtx"]; 

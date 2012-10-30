@@ -1,10 +1,7 @@
 // test.js
 
-var util = require('util');
+var a = {1: '1'};
 
 
-var obj = 1;
-var xx = util.format("%j", obj);
-
-console.log(typeof obj);
+console.log( a[1] );
 

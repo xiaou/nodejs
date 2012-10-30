@@ -3,6 +3,7 @@
 
 var define = require("../define");
 var https = require("https");
+var http = require("http");
 var url = require("url");
 var fs = require("fs");
 var socketServer = require("../socketServer/socketServer");
@@ -26,9 +27,18 @@ function create()
 		cert: fs.readFileSync("certs/cert.pem")
 	};
 
-	httpsServer = https.createServer(options, onRequest);
-	httpsServer.listen(port, host);	
-	console.log("https server is running on " + host + ":" + port);
+	if(define.isHttps)
+	{
+		httpsServer = https.createServer(options, onRequest);
+		httpsServer.listen(port, host);	
+		console.log("https server is running on " + host + ":" + port);
+	}
+	else
+	{
+		httpsServer = http.createServer(onRequest);
+		httpsServer.listen(port, host);	
+		console.log("http server is running on " + host + ":" + port);
+	}
 	
 	return httpsServer;
 }

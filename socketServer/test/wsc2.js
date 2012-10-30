@@ -1,6 +1,6 @@
 
 var socket = io.connect(
-"https://10.13.64.98:8100/moa_rtx"
+"http://10.13.64.98:8100/moa_rtx"
 );
 
 var timer;
@@ -29,7 +29,7 @@ socket.on(msgProtocal.moa_rtx.auth, function(data){
 	{
 		log("auth success~");
 		socket.emit(msgProtocal.moa_rtx.message, "this is test data sending by MOA client");
-		timer = setInterval('testClosing()', 20 * 1000);
+		//timer = setInterval('testClosing()', 20 * 1000);
 	}
 	else
 		log("auth faild!!");
