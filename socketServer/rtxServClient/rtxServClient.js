@@ -6,29 +6,40 @@ var log = require("../logger").log;
 var util = require("util"); 
 
 
-var isConnected = false;
-var socket;
-var timer = null;
-var _funcRecvData;
+var client = function(){
+	this.isConnected;
+	this.socket;
+	this.timer;
+	this.cbRecvDataFunc;
+	
+	if(arguments.length === 0)
+	{//init
+		isConnected = false;
+		timer = null;
+	}
+	
+	return this;
+}();
+
 
 function help2Connect()
 {
-	if(typeof socket !== 'undefined')
-		socket.destroy();
-	socket = net.connect( {port: define.rtxServerLocation.port, 
+	if(typeof client.socket !== 'undefined')
+		client.socket.destroy();
+	client.socket = net.connect( {port: define.rtxServerLocation.port, 
 						   host: define.rtxServerLocation.host,
 						   localAddress: define.rtxClientAddress,
 						   }
 						 );
-	socket.setKeepAlive(true, 1000 * define.rtxClientKeepAliveDelay);
-	socket.setNoDelay(true);
+	client.socket.setKeepAlive(true, 1000 * define.rtxClientKeepAliveDelay);
+	client.socket.setNoDelay(true);
 	onEvent();
 }
 
 function help2Restart(){
-	if(isConnected)
+	if(client.isConnected)
 	{
-		isConnected = false;
+		client.isConnected = false;
 		log.info("disconnect to rtx server !~");
 		try2Connect();
 	}
@@ -38,9 +49,9 @@ function try2Connect()
 {
 	help2Connect();
 	
-	if(timer)
-		clearInterval(timer), timer = null;
-	timer = setInterval(function()
+	if(client.timer)
+		clearInterval(client.timer), client.timer = null;
+	client.timer = setInterval(function()
 	{
 		log.info("try to connect rtx server again...");
 		help2Connect();
@@ -48,24 +59,24 @@ function try2Connect()
 }
 
 function onEvent(){
-	socket.on("connect",  function()
+	client.socket.on("connect",  function()
 	{
-		isConnected = true;
-		if(timer)
-			clearInterval(timer), timer = null;
+		client.isConnected = true;
+		if(client.timer)
+			clearInterval(client.timer), client.timer = null;
 		
-		log.info("connect to rtx server success~");
+		log.info("connect to rtx server success~" + "( " + client.socket.address().address + ": " + client.socket.address().port + " -> " + client.socket.remoteAddress + ": " + client.socket.remotePort + " )");
 		
-		_funcRecvData({ type: "connect" });
+		client.cbRecvDataFunc({ type: "connect" });
 	});
 	
-	socket.on("end", function()
+	client.socket.on("end", function()
 	{
 		log.debug("on end");
 		help2Restart();
 	});
 	
-	socket.on("close", function(had_error)
+	client.socket.on("close", function(had_error)
 	{
 		log.debug("on close");
 		if(had_error)
@@ -73,7 +84,7 @@ function onEvent(){
 		help2Restart();
 	});
 	
-	socket.on("error", function(e)
+	client.socket.on("error", function(e)
 	{
 		log.debug("on error");
 		log.error("error: error.code = " + e.code);
@@ -81,7 +92,7 @@ function onEvent(){
 	
 	var aData = new Buffer(0);
 	
-	socket.on("data", function(data /**< it's 'Buffer' obj. */)
+	client.socket.on("data", function(data /**< it's 'Buffer' obj. */)
 	{/** received data from tcp server in oa area. */
 		aData = Buffer.concat([aData, data]);
 		
@@ -106,7 +117,7 @@ function onEvent(){
 				log.debug("on data(I got): " + len + strRes + "EndByte");
 			}
 			
-			_funcRecvData(JSON.parse(strRes));
+			client.cbRecvDataFunc(JSON.parse(strRes));
 			
 			// continue:
 			len = aData.readUInt32BE(0, true);
@@ -114,18 +125,17 @@ function onEvent(){
 	});
 	
 	
-	socket.on("drain", function()
+	client.socket.on("drain", function()
 	{
 		if(define.UDebug)
-			log.debug( "on drain. " + socket.bytesWritten + " bytesWritten" );
+			log.debug( "on drain. " + client.socket.bytesWritten + " bytesWritten" );
 	});
 }
 
-exports.connect = function(funcRecvData)
+exports.connect = function(cbRecvDataFunc)
 {
-	//return this; // when only test moa_rtx client....
 	log.info("then will connect to rtx server...");
-	_funcRecvData = funcRecvData;
+	client.cbRecvDataFunc = cbRecvDataFunc;
 	try2Connect();
 	return this;
 };
@@ -133,7 +143,7 @@ exports.connect = function(funcRecvData)
 /** send data to the tcp server in oa area. */
 exports.connect.prototype.send = exports.send = function(objData)
 {
-	if(isConnected)
+	if(client.isConnected)
 	{
 		var str = util.format('%j', objData);
 		log.debug("the str will be sending, length = " + str.length + ", content is:[" + str.substr(0, 20) + "...]");
@@ -181,20 +191,20 @@ exports.connect.prototype.send = exports.send = function(objData)
 				var bufferAll = Buffer.concat(bufList);
 				console.log( util.format("%s", bufferAll) );
 				
-				var b = socket.write(bufferAll, 'utf8', function(d){
-					log.debug("has writen to Grady. " + socket.bytesWritten + "bytesWritten")
+				var b = client.socket.write(bufferAll, 'utf8', function(d){
+					log.debug("has writen to Grady. " + client.socket.bytesWritten + "bytesWritten")
 				});
-				log.debug("write() return: " + b + ". " + socket.bytesWritten + "bytesWritten");
+				log.debug("write() return: " + b + ". " + client.socket.bytesWritten + "bytesWritten");
 			}
 			else
 			*/{
 				//setInterval(function(){
 				for(var i in bufArray)
 				{
-					var b = socket.write(bufArray[i], 'utf8', function(d){
-						//log.debug("has writen to Grady. " + socket.bytesWritten + "bytesWritten");
+					var b = client.socket.write(bufArray[i], 'utf8', function(d){
+						//log.debug("has writen to Grady. " + client.socket.bytesWritten + "bytesWritten");
 					});
-					//log.debug("write() return: " + b + ". " + socket.bytesWritten + "bytesWritten");
+					//log.debug("write() return: " + b + ". " + client.socket.bytesWritten + "bytesWritten");
 				}
 				//}, 1000 * 5);
 			}
@@ -202,7 +212,7 @@ exports.connect.prototype.send = exports.send = function(objData)
 		else
 		{
 			for(var i in bufArray)
-				socket.write(bufArray[i]);
+				client.socket.write(bufArray[i]);
 		}
 	}
 };

@@ -1,14 +1,18 @@
 // func.js
 
-
-exports.Client = function() 
-{
-	console.log("构造");
-
-	this.send = function(){
-		console.log("see");
-	}
+var client = function(){
+	this.isConnected;
+	this.socket;
+	this.timer = 1;
+	this._cbRecvDataFunc;
 	
+
 	return this;
-}
+}();
+
+var f = function(){};
+console.log(f);
+client.timer = 2;
+
+
 
