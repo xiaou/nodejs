@@ -10,18 +10,21 @@ var util = require("util");
 
 function ClientRoom()
 {
-	//If don't set those property, typeof they === 'undefined'.
-	//so when recv moa client's auth pkg, set those.
+	//If don't set those property(eg: new ClientRoom()), typeof they === 'undefined'.
 	Key = " It's the room of socket.io and It's Key of list send to rtx serv. ";
 	Value = " It's Value that the rtx serv care. ";
 }
-						
+
+/*
+ * clients是字典.
+ * key: socket.id  
+ * value: ClientRoom. 
+ * @note: value may be same in diffirent key. 
+ */
+var clients = {};
+							
 module.exports = function(ioSockets)
 {
-	/** key: socket. value: ClientRoom. @note: value may be same in diffirent key. */
-	var clients = {};
-
-	//
 	rtxServClient.connect(function(objData) {
 	/** received object data from tcp server in oa area. */
 		if(objData.type === "connect"){
@@ -41,10 +44,8 @@ module.exports = function(ioSockets)
 				}
 			}
 			else*/{
-				for(var so_ in clients){
-					if(typeof clients[so_].Key !== 'undefined')
-						list.push( clients[so_] );
-				}
+				for(var so_id in clients)
+					list.push( clients[so_id] );
 			}
 			rooms.NotificationList = list;
 			rtxServClient.send(rooms);
@@ -53,8 +54,7 @@ module.exports = function(ioSockets)
 		//recv object data from rtx serv.
 			if(define.UDebug){
 				for(var i in objData){
-					//log.debug("srv will-> moa :" + objData[i].Key + " (" +  objData[i].Value.UserName + ")");
-					log.debug("srv will-> moa :" + util.format("%j", objData[i]));
+					log.debug("rtx srv -> moa :" + util.format("%j", objData[i]));
 				}
 			}
 			
@@ -66,11 +66,8 @@ module.exports = function(ioSockets)
 	});
 	
 	//
-	ioSockets.on("connection", function(socket){
-		//clients.push(socket);
-		clients[socket] = new ClientRoom();
-		
-		log.debug("see: conn");
+	ioSockets.on("connection", function(socket){		
+		log.debug("see: conn. socket.id = " + socket.id);
 		
 		var timer = setTimeout(function() {
 			auth.hasAuth(socket, function(isHasAuth){
@@ -83,23 +80,24 @@ module.exports = function(ioSockets)
 		}, 1000 * define.authTimeOut);
 		
 		socket.on("disconnect", function(){
-			if(timer){ clearTimeout(timer), timer = null; }
+			log.error("see: disconnect. socket.id = " + socket.id);
 			
+			if(timer){ clearTimeout(timer), timer = null; }
 			auth.hasAuth(socket, function(isHasAuth){
 				if(isHasAuth){
-					log.error("disconnect! then send ReqType=2. list:[" + util.format("%j", clients[socket]) + "]");
+					log.error("(socket.id = " + socket.id + ".) Then send ReqType=2. list:[" + util.format("%j", clients[socket.id]) + "]");
 					
 					//send to rtx serv
-					rtxServClient.send({ReqType:2 , NotificationList: [clients[socket]]});
+					rtxServClient.send({ReqType:2 , NotificationList: [clients[socket.id]]});
+					
+					//
+					delete clients[socket.id];
 				}
-				
-				//clients.splice(clients.indexOf(socket), 1);
-				delete clients[socket];
 			});
 		});
 		
 		socket.on(msgProtocal.moa_rtx.auth, function(data){
-			log.debug("see: auth");
+			log.debug("see: auth. socket.id = " + socket.id);
 		
 			clearTimeout(timer), timer = null;
 			
@@ -107,15 +105,14 @@ module.exports = function(ioSockets)
 				socket.emit(msgProtocal.moa_rtx.auth, isOK);//send back to client.	
 				if(isOK){
 				//auth success.
-					clients[socket].Key = data.Key;
-					clients[socket].Value = data.Value;
 					if(define.UDebug){
-						log.debug("moa -> srv (auth success):" + util.format(data));
+						log.debug("(socket.id = " + socket.id + ".) moa -> srv (auth success):\n" + util.format(data));
 					}
+					clients[socket.id] = {Key: data.Key, Value: data.Value};
 					// Then, join the user to the room.
 					socket.join(data.Key);
 					//send to rtx serv
-					rtxServClient.send({ReqType:1 , NotificationList: [clients[socket]]});
+					rtxServClient.send({ReqType:1 , NotificationList: [clients[socket.id]]});
 				}
 				else{
 					socket.disconnect();
@@ -124,9 +121,12 @@ module.exports = function(ioSockets)
 		});
 		
 		socket.on(msgProtocal.moa_rtx.message, function(data){
+			log.debug("see: message. socket.id = " + socket.id);
+			
 			auth.hasAuth(socket, function(isHasAuth){
 				if(isHasAuth){
 					if(define.UDebug){
+						log.debug("srv -> moa (message, test back):" + data);
 						socket.emit(msgProtocal.moa_rtx.message, data);
 						return;
 					}
@@ -137,6 +137,7 @@ module.exports = function(ioSockets)
 				}
 				else{
 				//居然没发auth包就发来了message包.直接断开这个连接.
+					log.error("havn't auth!!!! srv <- moa (message, will close you!):" + data);
 					if(timer) { clearTimeout(timer), timer = null; }
 					socket.disconnect();
 				}
