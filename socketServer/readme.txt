@@ -9,7 +9,7 @@ NOTE:
 
 date 2012.E.O.W.
 ---------------
-version 1.2.5
+version 1.2.6
 修改记录：
 -1.2.5: fix bug about clients{}.
 -1.2:加入日志模块.加入客户端测试html.
